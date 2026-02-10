@@ -1,6 +1,6 @@
 # Victron VE.Direct → ESPHome → Home Assistant (ESP32, Wi-Fi)
 
-Read Victron SmartSolar MPPT data over **VE.Direct (text mode)** with an **ESP32** and publish it into **Home Assistant** via **ESPHome** (Wi-Fi).  
+Read Victron SmartSolar MPPT data over VE.Direct (text mode) with an ESP32 and publish it into Home Assistant via ESPHome (Wi-Fi).  
 Includes: checksum validation, data-valid watchdog, decoded state/off-reason, and error-code text decoding.
 
 ## Features
