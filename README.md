@@ -37,8 +37,18 @@ Typical VE.Direct pinout (check your cable/device):
 
 No connection is required to Victron RX (this project is **read-only**).
 
-## Installation
+## Firmware installation
 
-### 1) Copy the external component into ESPHome
-In your Home Assistant config directory:
+### 1) Make sure ESPHome is installed onto your HA server, details can be found here: https://esphome.io/
+### 2) Copy the component folder and its contents into your Homeassistant/esphome folder
+### 3) Make sure you have a secrets.yaml file in the Homeassistant/esphome folder, this file should include the following:
+        wifi_SSID: "xxxx"
+        wifi_password: "xxxx"
+### 4) Copy the victron-gateway.yaml file into the Homeassistant.esphome folder. 
+### 5) Install ESPHome onto your ESP micropocessor and flash the victron-gateway.yaml file to it.
+
+## Hardware installation
+
+### 1) 
+
 
