@@ -1,0 +1,223 @@
+esphome:
+  name: victron-gateway
+
+external_components:
+  - source:
+      type: local
+      # This assumes you will create:
+      # /config/esphome/components/vedirect_mppt/{__init__.py, vedirect_mppt.h}
+      path: components
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+logger:
+
+api:
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  # Optional fallback AP (recommended so captive portal works when Wi-Fi fails)
+  #ap:
+    #ssid: "victron-gateway-fallback"
+    #password: !secret ap_password
+
+captive_portal:
+
+uart:
+  id: vedirect_uart
+  rx_pin: GPIO16
+  baud_rate: 19200
+
+# --- Victron VE.Direct (text) parser external component ---
+vedirect_mppt:
+  id: victron
+  uart_id: vedirect_uart
+
+  battery_voltage:
+    id: victron_battery_voltage
+    name: "Victron Battery Voltage"
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 2
+
+  panel_voltage:
+    id: victron_panel_voltage
+    name: "Victron Panel Voltage"
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 2
+
+  panel_power:
+    id: victron_panel_power
+    name: "Victron Panel Power"
+    unit_of_measurement: "W"
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 0
+
+  battery_current:
+    id: victron_battery_current
+    name: "Victron Battery Current"
+    unit_of_measurement: "A"
+    device_class: current
+    state_class: measurement
+    accuracy_decimals: 2
+
+  load_current:
+    id: victron_load_current
+    name: "Victron Load Current"
+    unit_of_measurement: "A"
+    device_class: current
+    state_class: measurement
+    accuracy_decimals: 2
+
+  load_output_on:
+    id: victron_load_output_on
+    name: "Victron Load Output On"
+
+  load_output_text:
+    name: "Victron Load Output State (text)"
+
+  off_reason_raw:
+    id: victron_off_reason_raw
+    name: "Victron Off Reason (raw)"
+    accuracy_decimals: 0
+
+  off_reason_text:
+    name: "Victron Off Reason (text)"
+
+  state_code:
+    id: victron_state_code
+    name: "Victron State of Operation (CS)"
+    accuracy_decimals: 0
+
+  state_text:
+    name: "Victron State of Operation (text)"
+
+  error_code:
+    id: victron_error_code
+    name: "Victron Error Code (ERR)"
+    accuracy_decimals: 0
+
+  max_power_today:
+    id: victron_max_power_today
+    name: "Victron Max Power Today (H21)"
+    unit_of_measurement: "W"
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 0
+
+  yield_today:
+    id: victron_yield_today
+    name: "Victron Yield Today (H20)"
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: total_increasing
+    accuracy_decimals: 3
+
+  yield_total:
+    id: victron_yield_total
+    name: "Victron Yield Total (H19)"
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: total_increasing
+    accuracy_decimals: 3
+
+  mppt_mode_code:
+    id: victron_mppt_mode_code
+    name: "Victron Tracker Mode (MPPT)"
+    accuracy_decimals: 0
+
+  mppt_mode_text:
+    name: "Victron Tracker Mode (text)"
+
+  # Diagnostics / “quirks”
+  data_valid:
+    id: victron_data_valid
+    name: "Victron VE.Direct Data Valid"
+
+  frame_age:
+    id: victron_frame_age
+    name: "Victron Frame Age"
+    unit_of_measurement: "s"
+    state_class: measurement
+    accuracy_decimals: 0
+
+  frames_ok:
+    name: "Victron Frames OK"
+    accuracy_decimals: 0
+
+  frames_bad:
+    name: "Victron Frames Bad"
+    accuracy_decimals: 0
+
+  battery_power:
+    name: "Victron Battery Power"
+    unit_of_measurement: "W"
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 0
+
+  load_power:
+    name: "Victron Load Power"
+    unit_of_measurement: "W"
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 0
+
+  pv_efficiency:
+    name: "Victron PV→Battery Efficiency"
+    unit_of_measurement: "%"
+    state_class: measurement
+    accuracy_decimals: 1
+
+# --- Decode ERR code into human-readable text ---
+text_sensor:
+  - platform: template
+    name: "Victron Error Code (text)"
+    icon: "mdi:alert-circle-outline"
+    update_interval: 1s
+    lambda: |-
+      if (!id(victron_data_valid).state) return std::string("No data");
+
+      const int e = (int) lroundf(id(victron_error_code).state);
+      switch (e) {
+        case 0:   return std::string("No error");
+        case 2:   return std::string("Battery voltage too high");
+        case 17:  return std::string("Charger temperature too high");
+        case 18:  return std::string("Charger over current");
+        case 19:  return std::string("Charger current reversed");
+        case 20:  return std::string("Bulk time limit exceeded");
+        case 21:  return std::string("Current sensor issue (bias/broken)");
+        case 26:  return std::string("Terminals overheated");
+        case 28:  return std::string("Converter issue (dual converter models only)");
+        case 33:  return std::string("Input voltage too high (solar panel)");
+        case 34:  return std::string("Input current too high (solar panel)");
+        case 38:  return std::string("Input shutdown (excessive battery voltage)");
+        case 39:  return std::string("Input shutdown (current flow during off mode)");
+        case 65:  return std::string("Lost communication with one of devices");
+        case 66:  return std::string("Synchronized charging config issue");
+        case 67:  return std::string("BMS connection lost");
+        case 68:  return std::string("Network misconfigured");
+        case 116: return std::string("Factory calibration data lost");
+        case 117: return std::string("Invalid/incompatible firmware");
+        case 119: return std::string("User settings invalid");
+        default: {
+          char buf[48];
+          snprintf(buf, sizeof(buf), "Unknown error (%d)", e);
+          return std::string(buf);
+        }
+      }
+
+button:
+  - platform: restart
+    name: "Victron Gateway Restart"
