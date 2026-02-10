@@ -55,5 +55,8 @@ No connection is required to Victron RX (this project is **read-only**).
 
 <img width="765" height="160" alt="image" src="https://github.com/user-attachments/assets/76f246a6-3686-4008-8bcd-18b3e21613fe" />
 
+## Example dashboard
+
+<img width="618" height="1037" alt="image" src="https://github.com/user-attachments/assets/12796106-96c0-4bdf-876a-765f3febf059" />
 
 
