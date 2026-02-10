@@ -1,0 +1,91 @@
+**Below is the yaml for a simple dashboard example** Make sure you have installed Power flow card plus: https://github.com/flixlix/power-flow-card-plus
+
+  - type: custom:power-flow-card-plus
+    entities:
+      battery:
+        state_of_charge: sensor.soc_accu_garagebox
+        show_state_of_charge: true
+        state_of_charge_unit: "%"
+        state_of_charge_decimals: 0
+        color_state_of_charge_value: true
+        entity:
+          production: sensor.solar_to_battery_power
+          consumption: sensor.battery_to_garage_power
+        invert_state: false
+        color_value: true
+        use_metadata: false
+        color_circle: true
+        state_of_charge_unit_white_space: false
+      grid:
+        secondary_info: {}
+      solar:
+        display_zero_state: true
+        secondary_info:
+          entity: sensor.victron_gateway_victron_yield_today_h20
+          decimals: 2
+          accept_negative: false
+          unit_of_measurement: kWh
+          unit_white_space: true
+        color_value: true
+        color_icon: true
+        invert_state: false
+        use_metadata: false
+        name: Zon
+        entity: sensor.victron_mppt_dummy_victron_panel_power
+      home:
+        secondary_info:
+          color_value: false
+          display_zero: false
+          decimals: 7
+          unit_white_space: true
+          entity: sensor.garage_dagelijks_stroomverbruik
+          unit_of_measurement: kWh
+        hide: false
+        override_state: true
+        use_metadata: false
+        subtract_individual: false
+        circle_animation: true
+        icon: mdi:garage-variant
+        name: Garage
+        entity: sensor.garage_load_power
+        color_value: true
+      individual: []
+    clickable_entities: true
+    display_zero_lines:
+      mode: show
+      transparency: 50
+      grey_color:
+        - 189
+        - 189
+        - 189
+    use_new_flow_rate_model: true
+    w_decimals: 0
+    kw_decimals: 1
+    min_flow_rate: 0.75
+    max_flow_rate: 6
+    max_expected_power: 2000
+    min_expected_power: 0.01
+    watt_threshold: 1000
+    transparency_zero_lines: 0
+    sort_individual_devices: false
+    disable_dots: false
+  - type: entities
+    entities:
+      - entity: sensor.victron_mppt_dummy_victron_battery_voltage
+        name: Accu voltage
+      - entity: sensor.victron_mppt_dummy_victron_panel_voltage
+        name: Huidig PV voltage
+      - entity: sensor.victron_mppt_dummy_victron_battery_current
+        name: Huidige accu stroom
+      - entity: sensor.victron_gateway_victron_battery_power
+        name: Huidig accu vermogen
+      - entity: sensor.victron_gateway_victron_max_power_today_h21
+        name: Maximaal PV vermogen vandaag
+      - entity: sensor.victron_gateway_victron_error_code_text
+        name: Victron error code
+      - entity: sensor.victron_mppt_dummy_victron_state_of_operation_text
+        name: Victron status
+      - entity: sensor.victron_mppt_dummy_victron_tracker_mode_text
+        name: Victron MPPT mode
+      - entity: sensor.victron_gateway_victron_yield_total_h19
+        name: Totaal opgewekte energie
