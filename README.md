@@ -49,6 +49,11 @@ No connection is required to Victron RX (this project is **read-only**).
 
 ## Hardware installation
 
-### 1) 
+### 1) Connect a wire to a GND of the ESP
+### 2) Connect a wire to GPIO16 (or another GPIO pin if you changed the config) 
+### 3) Crimp both ends and add a 2.54 female JST connector (See image for the pinout), Use the GND and VE.Direct-TX
+
+<img width="765" height="160" alt="image" src="https://github.com/user-attachments/assets/76f246a6-3686-4008-8bcd-18b3e21613fe" />
+
 
 
